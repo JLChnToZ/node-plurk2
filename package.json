@@ -1,0 +1,36 @@
+{
+  "name": "plurk2",
+  "version": "0.1.0",
+  "description": "Full featured Plurk API 2.0 for Node.js",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "babel src -d lib",
+    "prepublish": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JLChnToZ/node-plurk2.git"
+  },
+  "keywords": [
+    "plurk"
+  ],
+  "author": "Jeremy Lam \"JLChnToZ\"",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/JLChnToZ/node-plurk2/issues"
+  },
+  "homepage": "https://github.com/JLChnToZ/node-plurk2#readme",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.6.0"
+  },
+  "dependencies": {
+    "request": "^2.81.0",
+    "request-promise": "^4.2.1"
+  },
+  "babel": {
+    "presets": [
+      "env"
+    ]
+  }
+}

@@ -69,7 +69,7 @@ export class PlurkClient extends EventEmitter {
       oauth: getOAuthParams(this)
     };
     options[useFormData ? 'formData' : 'form'] = form;
-    return request(options).then(parseResponse);
+    return request(options);
   }
   startComet() {
     if(this.cometStarted) return;

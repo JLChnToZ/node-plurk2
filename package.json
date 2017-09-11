@@ -1,6 +1,6 @@
 {
   "name": "plurk2",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Full featured Plurk API 2.0 for Node.js",
   "main": "lib/index.js",
   "scripts": {

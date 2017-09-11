@@ -1,6 +1,6 @@
 'use strict';
 import { parse as parseUrl } from 'url';
-import queryString from 'querystring';
+import { parse as parseBody } from 'querystring';
 import EventEmitter from 'events';
 import request from 'request-promise';
 
@@ -15,6 +15,7 @@ const pathMatcher = /^\/?(?:APP\/)?(.+)$/;
 const numberMatcher = /[0-9]+/g;
 const plurkUrlMatcher = /plurk\.com\/(m\/)?p\/([0-9a-z]+)(\/#)?$/;
 const plurkUserMatcher = /plurk\.com\/(m\/u\/)?([0-9a-zA-Z_]+)(\/#)?$/;
+const plurkLimitToMatcher = /^(?:\|[0-9]+\|)*$/;
 
 export class PlurkClient extends EventEmitter {
   constructor(consumerKey, consumerSecret, token, tokenSecret) {
@@ -41,15 +42,19 @@ export class PlurkClient extends EventEmitter {
     if(!resolved || resolved.length < 2)
       throw new Error(`Invalid api path '${api}'`);
     const form = {};
+    let useFormData = false;
     if(parameters)
       for(let key in parameters) {
         const value = parameters[key];
         switch(typeof value) {
-          case 'undefined': case 'function': break;
+          case 'undefined': case 'function': case 'symbol': break;
           case 'object':
             if(value instanceof Date)
               form[key] = value.toISOString();
-            else
+            else if(value && (value instanceof Buffer || typeof value.pipe === 'function')) {
+              form[key] = value;
+              useFormData = true;
+            } else
               form[key] = JSON.stringify(value);
             break;
           default:
@@ -57,11 +62,14 @@ export class PlurkClient extends EventEmitter {
             break;
         }
       }
-    return request({
+    const options = {
       url: `${endPoint}APP/${resolved[1]}`,
-      method: 'POST', form, json: true,
+      method: 'POST', json: true,
+      jsonReviver: parseResponse,
       oauth: getOAuthParams(this)
-    });
+    };
+    options[useFormData ? 'formData' : 'form'] = form;
+    return request(options).then(parseResponse);
   }
   startComet() {
     if(this.cometStarted) return;
@@ -84,6 +92,9 @@ export class PlurkClient extends EventEmitter {
       delete this[pollCometRequest];
     }
   }
+  pollComet() {
+    return pollComet(this);
+  }
   get authPage() {
     return this.token ? `${endPoint}OAuth/authorize?oauth_token=${this.token}` : '';
   }
@@ -103,7 +114,7 @@ function pollComet(client) {
     response = JSON.parse(response.substring(
       response.indexOf('{'),
       response.lastIndexOf('}') + 1
-    ));
+    ), parseResponse);
     client.emit('comet', response);
     const { data, new_offset } = response;
     client[cometUrl].query.offset = new_offset;
@@ -113,7 +124,10 @@ function pollComet(client) {
         if(entry && entry.type) client.emit(entry.type, entry);
     process.nextTick(pollComet, client);
   }).catch(err => {
-    client.cometStarted = false;
+    if(client.stopCometOnError)
+      client.cometStarted = false;
+    else
+      process.nextTick(pollComet, client);
     client.emit('error', err);
   }).finally(() => {
     delete client[pollCometRequest];
@@ -131,12 +145,30 @@ function getOAuthParams(client, params = {}) {
 }
 
 function setOAuthParams(client, val) {
-  val = queryString.parse(val);
+  val = parseBody(val);
   if(val.oauth_token)
     client.token = val.oauth_token;
   if(val.oauth_token_secret)
     client.tokenSecret = val.oauth_token_secret;
   return client;
+}
+
+const dateFields = ['date_of_birth', 'posted', 'now', 'issued'];
+
+function parseResponse(key, value) {
+  switch(typeof value) {
+    case 'string':
+      if(key === 'limited_to') {
+        if(plurkLimitToMatcher.test(value))
+          return limitTo.parse(value);
+      } else if(dateFields.indexOf(key) >= 0)
+        return new Date(value);
+      break;
+    case 'number':
+      if(key === 'timestamp')
+        return new Date(value * 1000);
+  }
+  return value;
 }
 
 export const limitTo = {

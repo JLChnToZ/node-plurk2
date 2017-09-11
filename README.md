@@ -3,7 +3,7 @@ Node-Plurk2
 Plurk2 is a full featured Plurk API 2.0 interface for Node.js. It wraps all requests with OAuth 1.0 headers which has been documented. Also it handles events from comet channel.
 
 Installation
-------------
+----------
 ```sh
 $ npm i --save plurk2
 ```
@@ -28,19 +28,20 @@ Besides the main `PlurkClient` class, it also bundles other utilities for using 
 	- returns `plurkClient` once promise resolved: Current plurk client instance.
 - `plurkClient.request(api, [parameters])` >> `Promise` (`jsonData`) - Make a post request API call to Plurk (as recommended in the documentation), it will uses the oauth token provided in the client instance if available.
 	- `api`: API path as written in the documentation. `APP/` prefix can be omitted.
-	- `parameters`: Object hash of the parameters, can be omitted if no parameters. Also it will automatically converts `Date` object entries to [ISO8601 string](https://en.wikipedia.org/wiki/ISO_8601) and `Array` object entries to JSON string before request.
-	- returns `jsonData` once promise resolved: The parsed JSON data respond from Plurk.
+	- `parameters`: Object hash of the parameters, can be omitted if no parameters. Also it will automatically converts `Date` object entries to [ISO8601 string](https://en.wikipedia.org/wiki/ISO_8601) and `Array` object entries to JSON string before request. You may also pass Node.js native `Buffer` or `Stream` values for image uploading APIs such as [`/APP/Timeline/uploadPicture`](https://www.plurk.com/API#/APP/Timeline/uploadPicture).
+	- returns `jsonData` once promise resolved: The parsed JSON data respond from Plurk. It will auto converts all known date/time fields to `Date` objects and `limited_to` field to array of numbers.
 - `plurkClient.startComet()` - Start long poll from comet channel, it auto handles request for comet server URL and it will auto keep polling until you stops it.
 - `plurkClient.stopComet()` - Stops long poll from comet channel.
 - `plurkClient.authPage` - User authentication URL. Should be inform user to navigate to this URL once the promise of `getRequestToken(...)` has been resolved.
 - `plurkClient.mobileAuthPage` - Mobile version of user authentication URL. Users may navigate to this URL instead of `authPage` if they are using smartphones.
 - `plurkClient.on(eventName, function(data) {...})` - Event callback on comet channel receives each data push.
 	- `eventName`: Can be `new_plurk`, `new_response` or any others.
-	- `data`: Parsed JSON push data entry.
+	- `data`: Parsed JSON push data entry. All fields will be converted to JavaScript types as same as the response by calling `request()`.
 - `plurkClient.on('comet', function(comet) {...})` - Event callback on comet channel responses. This will be called even on comet channel does not returns any new push. This event fires before any other comet channel events.
-	- `comet`: Raw comet channel callback.
+	- `comet`: Raw comet channel callback. All fields will be converted to JavaScript types as same as the response by calling `request()`.
 - `plurkClient.on('error', function(err) {...})` - General error callback from comet channel.
 	- `err`: Error thrown when parsing comet channel, or when making a request on comet.
+- `plurkClient.stopCometOnError` - Boolean field, set to `true` to automatic stops the comet channel when any error has been thrown, or else it will keep reconnect even have errors.
 
 ### limitTo
 `limitTo` is an utility namespace that encodes and decodes Plurk limitTo field format to and from array which looks like this: `|1||2|`.

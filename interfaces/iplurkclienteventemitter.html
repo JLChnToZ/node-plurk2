@@ -965,14 +965,16 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/JLChnToZ/node-plurk2/blob/d267013/src/index.ts#L288">index.ts:288</a></li>
+								<li>Defined in <a href="https://github.com/JLChnToZ/node-plurk2/blob/be7ec6e/src/index.ts#L291">index.ts:291</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
 							<div class="lead">
 								<p>Event callback on comet channel responses.
 									This will be called even on comet channel does not returns any new push.
-								This event fires before any other comet channel events.</p>
+									This event fires before any other comet channel events.
+									The fields are already converted to JavaScript types just like
+								the resolved promise in <code>request()</code>.</p>
 							</div>
 						</div>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1007,7 +1009,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/JLChnToZ/node-plurk2/blob/d267013/src/index.ts#L292">index.ts:292</a></li>
+								<li>Defined in <a href="https://github.com/JLChnToZ/node-plurk2/blob/be7ec6e/src/index.ts#L295">index.ts:295</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1047,12 +1049,17 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/JLChnToZ/node-plurk2/blob/d267013/src/index.ts#L297">index.ts:297</a></li>
+								<li>Defined in <a href="https://github.com/JLChnToZ/node-plurk2/blob/be7ec6e/src/index.ts#L305">index.ts:305</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
 							<div class="lead">
-								<p>Event callback on comet channel receives each data push.</p>
+								<p>Event callback on comet channel receives each data push.
+									It is already filtered by push event types as you defined in <code>event</code> parameter
+									and converted to JavaScript types just like the resolved promise in <code>request()</code>.
+									For more info please check out
+									<a href="https://www.plurk.com/API#Comet_channel_specification">comet channel specification</a>
+								section in API reference.</p>
 							</div>
 						</div>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1060,7 +1067,7 @@ img { max-width: 100%; }
 							<li>
 								<h5>event: <span class="tsd-signature-type">string</span></h5>
 								<div class="tsd-comment tsd-typography">
-									<p>Can be <code>new_plurk</code>, <code>new_response</code> or any others.</p>
+									<p>Can be <code>new_plurk</code>, <code>new_response</code> or any others which supported.</p>
 								</div>
 							</li>
 							<li>

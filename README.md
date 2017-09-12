@@ -10,7 +10,7 @@ $ npm i --save plurk2
 
 Usage
 -----
-Documentation will be available [here](https://code.moka-rin.moe/node-plurk2).
+Documentation will be available [here](https://code.moka-rin.moe/node-plurk2/).
 
 ### Example Usage
 ```javascript

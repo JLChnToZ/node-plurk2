@@ -2,9 +2,11 @@
   "name": "plurk2",
   "version": "0.2.0",
   "description": "Full featured Plurk API 2.0 for Node.js",
-  "main": "lib/index.js",
+  "main": "lib/index",
+  "type": "lib/index",
   "scripts": {
-    "build": "babel src -d lib",
+    "build": "tsc",
+    "build-doc": "typedoc --excludeNotExported --excludePrivate --theme minimal --mode file --target es5 --readme none --out ./docs/ ./",
     "prepublish": "npm run build"
   },
   "repository": {
@@ -21,8 +23,10 @@
   },
   "homepage": "https://github.com/JLChnToZ/node-plurk2#readme",
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-preset-env": "^1.6.0"
+    "@types/node": "^8.0.28",
+    "@types/request-promise": "^4.1.37",
+    "typedoc": "^0.8.0",
+    "typescript": "^2.5.2"
   },
   "dependencies": {
     "request": "^2.81.0",

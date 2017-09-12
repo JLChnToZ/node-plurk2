@@ -1,4 +1,5 @@
 /// <reference types="node" />
+/// <reference types="bluebird" />
 import * as EventEmitter from 'events';
 import * as Promise from 'bluebird';
 /**
@@ -62,6 +63,7 @@ export declare class PlurkClient extends EventEmitter implements IPlurkClientEve
     /**
      * Make a post request API call to Plurk (as recommended in the documentation),
      * it will uses the oauth token provided in the client instance if available.
+     * [Plurk API Reference](https://www.plurk.com/API)
      * @param api API path as written in the documentation.
      * `APP/` prefix can be omitted.
      * @param parameters Object hash of the parameters, can be omitted if no parameters.
@@ -109,6 +111,8 @@ export interface IPlurkClientEventEmitter {
      * Event callback on comet channel responses.
      * This will be called even on comet channel does not returns any new push.
      * This event fires before any other comet channel events.
+     * The fields are already converted to JavaScript types just like
+     * the resolved promise in `request()`.
      */
     on(event: 'comet', listener: (comet: any) => void): this;
     /**
@@ -117,6 +121,12 @@ export interface IPlurkClientEventEmitter {
     on(event: 'error', listener: (err: any) => void): this;
     /**
      * Event callback on comet channel receives each data push.
+     * It is already filtered by push event types as you defined in `event` parameter
+     * and converted to JavaScript types just like the resolved promise in `request()`.
+     * For more info please check out
+     * [comet channel specification](https://www.plurk.com/API#Comet_channel_specification)
+     * section in API reference.
+     * @param event Can be `new_plurk`, `new_response` or any others which supported.
      */
     on(event: string, listener: (data: any) => void): this;
 }

@@ -47,30 +47,42 @@ export declare namespace APIStructs {
         recruited: number;
         relationship: Relationship;
     }
-    interface Plurk {
+    interface Entry {
+        id: number;
         plurk_id: number;
+        user_id: number;
+        user?: User;
         lang: string;
+        posted: Date;
+        last_edited: Date | null;
         qualifier: string;
         qualifier_translated: string;
-        posted: Date;
         content: string;
         content_raw: string;
+    }
+    interface Plurk extends Entry {
         owner_id: number;
-        user_id: number;
+        owner?: User;
         is_unread: YesNo;
         no_comments: CommentableState;
         plurk_type: number;
         response_count: number;
         responses_seen: number;
         limited_to: number[] | null;
+        limited_to_data?: User[];
         favorite: boolean;
         favorite_count: number;
         favorers: number[];
+        favorers_data?: User[];
         replurkable: boolean;
         replurked: boolean;
         replurker_id: number;
+        replurker?: User;
         replurkers_count: number;
         replurkers: number[];
+        replurkers_data?: User[];
+    }
+    interface Response extends Entry {
     }
     const enum AlertType {
         friendshipRequest = "friendship_request",

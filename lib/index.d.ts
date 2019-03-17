@@ -1,7 +1,7 @@
 /// <reference types="node" />
-/// <reference types="bluebird" />
-import * as EventEmitter from 'events';
-import * as Promise from 'bluebird';
+import { EventEmitter } from 'events';
+import * as BlueBirdPromise from 'bluebird';
+import { limitTo } from './limit-to';
 /**
  * `PlurkClient` is a class that wraps all plurk API call and handles comet channel when enabled.
  * It inherits from Node.js's [EventEmitter](https://nodejs.org/api/events.html#events_class_eventemitter) class.
@@ -33,8 +33,15 @@ export declare class PlurkClient extends EventEmitter implements IPlurkClientEve
      * or else it will keep reconnect even have errors.
      */
     stopCometOnError: boolean;
-    private _cometUrl;
-    private _pollCometRequest;
+    /**
+     * Boolean field, set to `true` to populate the user data
+     * to specific fields. For example, response data in comet channel
+     * will have a `user` field with user details in it if detail of `user_id`
+     * is found in raw channel response.
+     */
+    populateUsers: boolean;
+    private _cometUrl?;
+    private _pollCometRequest?;
     /**
      * Constructor
      * @param consumerKey Consumer token, can be obtain one from Plurk App console.
@@ -76,7 +83,7 @@ export declare class PlurkClient extends EventEmitter implements IPlurkClientEve
      * It will auto converts all known date/time fields to `Date` objects
      * and `limited_to` field to array of numbers.
      */
-    request(api: string, parameters?: any): Promise<any>;
+    request(api: string, parameters?: any): BlueBirdPromise<any>;
     /**
      * Start long poll from comet channel, it auto handles request for comet server
      * URL and it will auto keep polling until you stops it.
@@ -101,12 +108,10 @@ export declare class PlurkClient extends EventEmitter implements IPlurkClientEve
      * Users may navigate to this URL instead of `authPage` if they are using smartphones.
      */
     readonly mobileAuthPage: string;
-    private _getOAuthParams(params?);
-    private _setOAuthParams(body);
-    private static _pollComet(client);
-    private static _parseResponse(key, value);
+    private _getOAuthParams;
+    private _setOAuthParams;
 }
-export interface IPlurkClientEventEmitter {
+export interface IPlurkClientEventEmitter extends NodeJS.EventEmitter {
     /**
      * Event callback on comet channel responses.
      * This will be called even on comet channel does not returns any new push.
@@ -114,7 +119,7 @@ export interface IPlurkClientEventEmitter {
      * The fields are already converted to JavaScript types just like
      * the resolved promise in `request()`.
      */
-    on(event: 'comet', listener: (comet: any) => void): this;
+    on(event: 'comet', listener: (comet: any, raw: string) => void): this;
     /**
      * General error callback from comet channel.
      */
@@ -130,72 +135,6 @@ export interface IPlurkClientEventEmitter {
      */
     on(event: string, listener: (data: any) => void): this;
 }
-/**
- * `limitTo` is an utility namespace that encodes and decodes Plurk limitTo
- * field format to and from array which looks like this: `|1||2|`.
- */
-export declare namespace limitTo {
-    function parse(src: number[]): number[];
-    /**
-     * Parses the limitTo format to array
-     * @param src Source string.
-     * @return {number[] | undefined}
-     */
-    function parse(src: string): number[] | undefined;
-    /**
-     * Converts array of Plurk IDs to limitTo format.
-     * @param src Source array of Plurk IDs.
-     * @return {string}
-     */
-    function stringify(src: number[]): string;
-}
-/**
- * `base36` is an utility that converts base36 string to or from number.
- */
-export declare namespace base36 {
-    /**
-     * Base36 string to number.
-     * @param val Base36 string.
-     * @return {number}
-     */
-    function decode(val: string): number;
-    /**
-     * Number to base36 string.
-     * @param val Number.
-     * @return {string}
-     */
-    function encode(val: number): string;
-}
-/**
- * `urlmatch` is an utility that extracts an user or a plurk's id from URL.
- */
-export declare namespace urlmatch {
-    /**
-     * Extracts plurk id from URL provided.
-     * @param url Url to parse.
-     * @param decode Should automatic converts base36 id to number?
-     * @return {string | undefined}
-     */
-    function plurk(url: string, decode: false): string | undefined;
-    /**
-     * Extracts plurk id from URL provided.
-     * @param url Url to parse.
-     * @param decode Should automatic converts base36 id to number?
-     * @return {number | undefined}
-     */
-    function plurk(url: string, decode: true): number | undefined;
-    /**
-     * Extracts user id from URL provided.
-     * @param url Url to parse.
-     * @param decode Should automatic converts base36 id to number?
-     * @return {string | undefined}
-     */
-    function user(url: string, decode: false): string | undefined;
-    /**
-     * Extracts user id from URL provided.
-     * @param url Url to parse.
-     * @param decode Should automatic converts base36 id to number?
-     * @return {number | undefined}
-     */
-    function user(url: string, decode: true): number | undefined;
-}
+export * from './urlwatch';
+export * from './base36';
+export { limitTo };

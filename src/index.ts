@@ -116,8 +116,10 @@ export class PlurkClient extends EventEmitter implements IPlurkClientEventEmitte
    * @return {Promise.<?>} The parsed JSON data respond from Plurk.
    * It will auto converts all known date/time fields to `Date` objects
    * and `limited_to` field to array of numbers.
+   * Also, the response will return some timing measurement info of the call, for details please see
+   * [the usage of the request package](https://github.com/request/request/blob/master/README.md).
    */
-  request(api: string, parameters?: any): BlueBirdPromise<any> {
+  request(api: string, parameters?: any): request.RequestPromise {
     const resolved: string[] | null = pathMatcher.exec(api);
     if(!resolved || resolved.length < 2)
       throw new Error(`Invalid api path '${api}'`);
@@ -147,7 +149,8 @@ export class PlurkClient extends EventEmitter implements IPlurkClientEventEmitte
       [useFormData ? 'formData' : 'form']: form,
       method: 'POST', json: true,
       jsonReviver: PlurkClientUtils.parseResponse,
-      oauth: this._getOAuthParams()
+      oauth: this._getOAuthParams(),
+      time: true,
     });
   }
 

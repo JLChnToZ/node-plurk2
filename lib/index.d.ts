@@ -1,6 +1,6 @@
 /// <reference types="node" />
 import { EventEmitter } from 'events';
-import * as BlueBirdPromise from 'bluebird';
+import * as request from 'request-promise';
 import { limitTo } from './limit-to';
 /**
  * `PlurkClient` is a class that wraps all plurk API call and handles comet channel when enabled.
@@ -82,8 +82,10 @@ export declare class PlurkClient extends EventEmitter implements IPlurkClientEve
      * @return {Promise.<?>} The parsed JSON data respond from Plurk.
      * It will auto converts all known date/time fields to `Date` objects
      * and `limited_to` field to array of numbers.
+     * Also, the response will return some timing measurement info of the call, for details please see
+     * [the usage of the request package](https://github.com/request/request/blob/master/README.md).
      */
-    request(api: string, parameters?: any): BlueBirdPromise<any>;
+    request(api: string, parameters?: any): request.RequestPromise;
     /**
      * Start long poll from comet channel, it auto handles request for comet server
      * URL and it will auto keep polling until you stops it.

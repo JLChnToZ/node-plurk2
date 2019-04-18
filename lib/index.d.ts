@@ -82,8 +82,8 @@ export declare class PlurkClient extends EventEmitter implements IPlurkClientEve
      * @return {Promise.<?>} The parsed JSON data respond from Plurk.
      * It will auto converts all known date/time fields to `Date` objects
      * and `limited_to` field to array of numbers.
-     * Also, the response will return some timing measurement info of the call, for details please see
-     * [the usage of the request package](https://github.com/request/request/blob/master/README.md).
+     * Also, the response will return some timing measurement info for the call, for details please see
+     * [the usage of the request package](https://github.com/request/request/blob/master/README.md)
      */
     request(api: string, parameters?: any): request.RequestPromise;
     /**

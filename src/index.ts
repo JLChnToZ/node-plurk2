@@ -116,8 +116,8 @@ export class PlurkClient extends EventEmitter implements IPlurkClientEventEmitte
    * @return {Promise.<?>} The parsed JSON data respond from Plurk.
    * It will auto converts all known date/time fields to `Date` objects
    * and `limited_to` field to array of numbers.
-   * Also, the response will return some timing measurement info of the call, for details please see
-   * [the usage of the request package](https://github.com/request/request/blob/master/README.md).
+   * Also, the response will return some timing measurement info for the call, for details please see
+   * [the usage of the request package](https://github.com/request/request/blob/master/README.md)
    */
   request(api: string, parameters?: any): request.RequestPromise {
     const resolved: string[] | null = pathMatcher.exec(api);
@@ -151,6 +151,7 @@ export class PlurkClient extends EventEmitter implements IPlurkClientEventEmitte
       jsonReviver: PlurkClientUtils.parseResponse,
       oauth: this._getOAuthParams(),
       time: true,
+      transform: transformWithTiming,
     });
   }
 
@@ -266,6 +267,22 @@ export class PlurkClient extends EventEmitter implements IPlurkClientEventEmitte
       this.tokenSecret = val.oauth_token_secret;
     return this;
   }
+}
+
+function transformWithTiming(body: any, response: any, resolveFullResponse?: boolean) {
+  if(!resolveFullResponse) {
+    assignIfExists(body, response, 'elapsedTime');
+    assignIfExists(body, response, 'responseStartTime');
+    assignIfExists(body, response, 'timingStart');
+    assignIfExists(body, response, 'timings');
+    assignIfExists(body, response, 'timingPhases');
+    return body;
+  }
+  return response;
+}
+
+function assignIfExists(a: any, b: any, key: PropertyKey) {
+  if((key in b) && !(key in a)) a[key] = b[key];
 }
 
 namespace PlurkClientUtils {

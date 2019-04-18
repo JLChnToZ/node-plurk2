@@ -23,14 +23,14 @@
   },
   "homepage": "https://github.com/JLChnToZ/node-plurk2#readme",
   "devDependencies": {
-    "typedoc": "^0.8.0",
+    "typedoc": "^0.14.2",
     "typescript": "^3.1.1"
   },
   "dependencies": {
     "@types/node": "^8.0.28",
     "@types/request-promise": "^4.1.37",
-    "request": "^2.81.0",
-    "request-promise": "^4.2.1"
+    "request": "^2.88.0",
+    "request-promise": "^4.2.4"
   },
   "babel": {
     "presets": [

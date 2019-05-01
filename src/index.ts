@@ -149,6 +149,11 @@ export class PlurkClient extends EventEmitter implements IPlurkClientEventEmitte
       [useFormData ? 'formData' : 'form']: form,
       method: 'POST', json: true,
       jsonReviver: PlurkClientUtils.parseResponse,
+      headers: {
+        'Content-Type': useFormData ?
+          'multipart/form-data' :
+          'application/x-www-form-urlencoded',
+      },
       oauth: this._getOAuthParams(),
       time: true,
       transform: transformWithTiming,

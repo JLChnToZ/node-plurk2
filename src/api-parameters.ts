@@ -489,7 +489,7 @@ export namespace Timeline {
   export interface PlurkAddOptions {
     content: any;
     qualifier: any;
-    limited_to?: string;
+    limited_to?: any[];
     excluded?: any;
     no_comments?: number;
     lang?: string;
@@ -568,7 +568,7 @@ export namespace Timeline {
 
   export interface MarkAllAsReadOptions {
     filter?: string;
-    exclude_ids?: string;
+    exclude_ids?: any[];
   }
 }
 

@@ -202,7 +202,7 @@ export declare namespace Timeline {
     interface PlurkAddOptions {
         content: any;
         qualifier: any;
-        limited_to?: string;
+        limited_to?: any[];
         excluded?: any;
         no_comments?: number;
         lang?: string;
@@ -266,7 +266,7 @@ export declare namespace Timeline {
     }
     interface MarkAllAsReadOptions {
         filter?: string;
-        exclude_ids?: string;
+        exclude_ids?: any[];
     }
 }
 export declare namespace Responses {

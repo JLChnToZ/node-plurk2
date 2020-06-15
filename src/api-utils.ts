@@ -18,8 +18,6 @@ function mapValues(val: string): string {
     case 'false':
     case 'null':
       return val;
-    case '[]':
-      return 'any[]';
     case 'PID':
       return 'number';
     default:
@@ -62,6 +60,8 @@ function processOptions(options: string, defaultValue: string) {
     case 'null':
     case 'n/a':
       return 'any';
+    case '[]':
+      return 'any[]';
     default:
       if(Number.isFinite(Number.parseFloat(defaultValue)))
         return 'number';

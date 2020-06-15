@@ -2,6 +2,7 @@
 import { EventEmitter } from 'events';
 import * as request from 'request-promise';
 import { limitTo } from './limit-to';
+import { APIParameters } from './api-parameters';
 /**
  * `PlurkClient` is a class that wraps all plurk API call and handles comet channel when enabled.
  * It inherits from Node.js's [EventEmitter](https://nodejs.org/api/events.html#events_class_eventemitter) class.
@@ -85,7 +86,7 @@ export declare class PlurkClient extends EventEmitter implements IPlurkClientEve
      * Also, the response will return some timing measurement info for the call, for details please see
      * [the usage of the request package](https://github.com/request/request/blob/master/README.md)
      */
-    request(api: string, parameters?: any): request.RequestPromise;
+    request<K extends keyof APIParameters>(api: K, parameters?: APIParameters[K][0]): request.RequestPromise & PromiseLike<APIParameters[K][1]>;
     /**
      * Start long poll from comet channel, it auto handles request for comet server
      * URL and it will auto keep polling until you stops it.
@@ -104,12 +105,12 @@ export declare class PlurkClient extends EventEmitter implements IPlurkClientEve
      * User authentication URL. Should be inform user to navigate to this URL
      * once the promise of `getRequestToken(...)` has been resolved.
      */
-    readonly authPage: string;
+    get authPage(): string;
     /**
      * Mobile version of user authentication URL.
      * Users may navigate to this URL instead of `authPage` if they are using smartphones.
      */
-    readonly mobileAuthPage: string;
+    get mobileAuthPage(): string;
     private _getOAuthParams;
     private _setOAuthParams;
 }

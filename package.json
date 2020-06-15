@@ -6,6 +6,7 @@
   "type": "lib/index",
   "scripts": {
     "build": "tsc",
+    "generate-api-params": "tsc && node lib/api-utils && tsc",
     "build-doc": "typedoc --excludeNotExported --excludePrivate --theme minimal --mode file --target es5 --readme none --out ./docs/ ./",
     "prepublish": "npm run build"
   },
@@ -24,10 +25,10 @@
   "homepage": "https://github.com/JLChnToZ/node-plurk2#readme",
   "devDependencies": {
     "typedoc": "^0.14.2",
-    "typescript": "^3.1.1"
+    "typescript": "^3.9.5"
   },
   "dependencies": {
-    "@types/node": "^8.0.28",
+    "@types/node": "^10.17.26",
     "@types/request-promise": "^4.1.37",
     "request": "^2.88.0",
     "request-promise": "^4.2.4"

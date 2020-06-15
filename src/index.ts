@@ -6,6 +6,8 @@ import * as BlueBirdPromise from 'bluebird';
 import { OAuthOptions } from 'request';
 import * as request from 'request-promise';
 import { limitTo } from './limit-to';
+import { APIStructs } from './api-structs';
+import { APIParameters } from './api-parameters';
 
 const endPoint: string = 'https://www.plurk.com/';
 const requestTokenUrl: string = `${endPoint}OAuth/request_token`;
@@ -119,6 +121,10 @@ export class PlurkClient extends EventEmitter implements IPlurkClientEventEmitte
    * Also, the response will return some timing measurement info for the call, for details please see
    * [the usage of the request package](https://github.com/request/request/blob/master/README.md)
    */
+  request<K extends keyof APIParameters>(
+    api: K,
+    parameters?: APIParameters[K][0],
+  ): request.RequestPromise & PromiseLike<APIParameters[K][1]>;
   request(api: string, parameters?: any): request.RequestPromise {
     const resolved: string[] | null = pathMatcher.exec(api);
     if(!resolved || resolved.length < 2)
@@ -215,7 +221,8 @@ export class PlurkClient extends EventEmitter implements IPlurkClientEventEmitte
       ), PlurkClientUtils.parseResponse);
       this.emit('comet', parsedResponse, response);
       const { data, user, new_offset } = parsedResponse;
-      this._cometUrl.query.offset = new_offset;
+      if(this._cometUrl?.query && typeof this._cometUrl.query !== 'string')
+        this._cometUrl.query.offset = new_offset;
       delete this._cometUrl.search;
       if(data && data.length)
         for(const entry of data) {
